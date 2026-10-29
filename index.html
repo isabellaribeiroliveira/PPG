@@ -1516,7 +1516,7 @@ body .sidebar.collapsed .brand{ padding:12px 0 6px !important; }
     <div class="sac-popup-body">
       <p>Precisando de uma mão para entrar? Aqui vão algumas dicas rápidas:</p>
       <ul>
-        <li>Sua <b>matrícula</b> é o seu usuário. No <b>primeiro acesso</b>, a senha é o seu <b>CPF</b> (somente números) — o sistema pede para você criar uma nova na hora.</li>
+        <li>Sua <b>matrícula</b> é o seu usuário. No <b>primeiro acesso</b>, a senha também é a matrícula — o sistema pede para você criar uma nova na hora.</li>
         <li>Esqueceu a senha? Toque em <b>"Esqueci minha senha"</b>: o sistema gera uma <b>senha temporária</b> na hora para você copiar e usar.</li>
         <li>Ainda com dúvida? Depois de entrar, use <b>"Fale com a Qualidade"</b>.</li>
         <li>Quer conhecer o programa antes de acessar? Role a tela para baixo.</li>
@@ -1558,7 +1558,7 @@ body .sidebar.collapsed .brand{ padding:12px 0 6px !important; }
         <button type="button" class="login-demo-toggle" id="loginDemoToggle"><span><i data-lucide="info"></i> Como faço meu primeiro acesso?</span><i data-lucide="chevron-down"></i></button>
         <div class="login-demo-collapsible" id="loginDemoPanel">
           <div class="login-demo">
-            <p style="margin:0 0 8px;"><b>Primeiro acesso:</b> use o seu CPF (somente números) como senha. O sistema vai pedir para você criar uma senha nova na hora.</p>
+            <p style="margin:0 0 8px;"><b>Primeiro acesso:</b> use sua matrícula também como senha. O sistema vai pedir para você criar uma senha nova na hora.</p>
             <p style="margin:0;"><b>Esqueceu a senha depois disso?</b> Toque em “Esqueci minha senha”: o sistema gera uma <b>senha temporária aleatória</b> na hora — é só copiar, entrar e criar uma nova. A equipe de Qualidade é avisada por e-mail.</p>
           </div>
         </div>
@@ -6138,7 +6138,7 @@ function abrirModalTrocaSenha(opts){
     const novaSenha = document.getElementById('tsNovaSenha').value;
     const confirmar = document.getElementById('tsConfirmar').value;
     if(novaSenha !== confirmar){ erroEl.textContent = "As senhas não coincidem."; erroEl.style.display = "block"; return; }
-    // No primeiro acesso obrigatório, a "senha atual" é o que a pessoa digitou no login (o CPF).
+    // No primeiro acesso obrigatório, a "senha atual" ainda é a própria matrícula.
     const senhaAtual = obrigatoria ? (opts.senhaAtual != null ? opts.senhaAtual : currentUser.matricula) : document.getElementById('tsSenhaAtual').value;
     const btn = this.querySelector('button[type="submit"]');
     btn.disabled = true; btn.textContent = "Salvando...";
@@ -6166,10 +6166,9 @@ document.getElementById('btnEsqueciSenha').addEventListener('click', ()=>{
   backdrop.innerHTML = `
     <div class="share-card" style="max-width:380px; text-align:left;">
       <h3>Esqueci minha senha</h3>
-      <p class="hint" style="margin-bottom:16px;">Informe sua matrícula e o seu CPF (para confirmar que é você). Vamos gerar uma <b>senha temporária aleatória</b> na hora — é só copiar, entrar e criar uma senha nova. A equipe de Qualidade é avisada por e-mail.</p>
+      <p class="hint" style="margin-bottom:16px;">Informe sua matrícula. Vamos gerar uma <b>senha temporária aleatória</b> na hora — é só copiar, entrar e criar uma senha nova. A equipe de Qualidade é avisada por e-mail.</p>
       <form id="formEsqueciSenha">
         <div class="field" style="margin-bottom:10px;"><label>Matrícula</label><input type="text" id="esqMatricula" required></div>
-        <div class="field" style="margin-bottom:10px;"><label>CPF (somente números)</label><input type="text" id="esqCpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00"></div>
         <div class="login-error" id="esqErro"></div>
         <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">Redefinir minha senha</button>
       </form>
@@ -6183,10 +6182,9 @@ document.getElementById('btnEsqueciSenha').addEventListener('click', ()=>{
     const erroEl = document.getElementById('esqErro');
     erroEl.style.display = "none";
     const matricula = document.getElementById('esqMatricula').value.trim();
-    const cpf = (document.getElementById('esqCpf') || {value:''}).value.trim();
     const btn = this.querySelector('button[type="submit"]');
     btn.disabled = true; btn.textContent = "Enviando...";
-    const resp = await backendCall('requestReset', {matricula, cpf});
+    const resp = await backendCall('requestReset', {matricula});
     btn.disabled = false; btn.textContent = "Redefinir minha senha";
     if(!resp.ok){ erroEl.textContent = resp.erro || "Não foi possível registrar o pedido."; erroEl.style.display = "block"; return; }
     const card = backdrop.querySelector('.share-card');
